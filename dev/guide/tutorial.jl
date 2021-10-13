@@ -10,9 +10,12 @@
 # and how to access basic information about calculations.
 # Basic familiarity with the concepts of plane-wave density functional theory
 # is assumed throughout. Feel free to take a look at the
-#md # [density-functional theory chapter](@ref density-functional-theory)
-#nb # [density-functional theory chapter](https://juliamolsim.github.io/DFTK.jl/dev/#density-functional-theory)
-# for some introductory material on the topic.
+#md # [Periodic problems](@ref periodic-problems)
+#nb # [Periodic problems](https://juliamolsim.github.io/DFTK.jl/stable/guide/periodic_problems/)
+# or the
+#md # [density-functional theory](@ref density-functional-theory)
+#nb # [density-functional theory](https://juliamolsim.github.io/DFTK.jl/stable/guide/density_functional_theory/)
+# chapters for some introductory material on the topic.
 #
 # !!! note "Convergence parameters in the documentation"
 #     We use rough parameters in order to be able
@@ -68,13 +71,13 @@ scfres.energies
 
 # Eigenvalues: 
 hcat(scfres.eigenvalues...)
-# `eigenvalues` is an array (indexed by kpoints) of arrays (indexed by
+# `eigenvalues` is an array (indexed by k-points) of arrays (indexed by
 # eigenvalue number). The "splatting" operation `...` calls `hcat`
 # with all the inner arrays as arguments, which collects them into a
 # matrix.
 #
 # The resulting matrix is 7 (number of computed eigenvalues) by 8
-# (number of kpoints). There are 7 eigenvalues per kpoint because
+# (number of k-points). There are 7 eigenvalues per k-point because
 # there are 4 occupied states in the system (4 valence electrons per
 # silicon atom, two atoms per unit cell, and paired spins), and the
 # eigensolver gives itself some breathing room by computing some extra
