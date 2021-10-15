@@ -18,18 +18,18 @@ function dipole(basis, ρ)
 end;</code></pre><h2 id="Using-finite-differences"><a class="docs-heading-anchor" href="#Using-finite-differences">Using finite differences</a><a id="Using-finite-differences-1"></a><a class="docs-heading-anchor-permalink" href="#Using-finite-differences" title="Permalink"></a></h2><p>We first compute the polarizability by finite differences. First compute the dipole moment at rest:</p><pre><code class="language-julia">model = model_LDA(lattice, atoms; symmetries=false)
 basis = PlaneWaveBasis(model; Ecut, kgrid)
 res   = self_consistent_field(basis, tol=tol)
-μref  = dipole(basis, res.ρ)</code></pre><pre class="documenter-example-output">-0.00013610850377267404</pre><p>Then in a small uniform field:</p><pre><code class="language-julia">ε = .01
+μref  = dipole(basis, res.ρ)</code></pre><pre class="documenter-example-output">-0.0001345006454224442</pre><p>Then in a small uniform field:</p><pre><code class="language-julia">ε = .01
 model_ε = model_LDA(lattice, atoms; extra_terms=[ExternalFromReal(r -&gt; -ε * (r[1] - a/2))],
                     symmetries=false)
 basis_ε = PlaneWaveBasis(model_ε; Ecut, kgrid)
 res_ε = self_consistent_field(basis_ε, tol=tol)
-με = dipole(basis_ε, res_ε.ρ)</code></pre><pre class="documenter-example-output">0.017618170133949496</pre><pre><code class="language-julia">polarizability = (με - μref) / ε
+με = dipole(basis_ε, res_ε.ρ)</code></pre><pre class="documenter-example-output">0.017617930665608936</pre><pre><code class="language-julia">polarizability = (με - μref) / ε
 
 println(&quot;Reference dipole:  $μref&quot;)
 println(&quot;Displaced dipole:  $με&quot;)
-println(&quot;Polarizability :   $polarizability&quot;)</code></pre><pre class="documenter-example-output">Reference dipole:  -0.00013610850377267404
-Displaced dipole:  0.017618170133949496
-Polarizability :   1.7754278637722172</pre><p>The result on more converged grids is very close to published results. For example <a href="https://doi.org/10.1039/C8CP03569E">DOI 10.1039/C8CP03569E</a> quotes <strong>1.65</strong> with LSDA and <strong>1.38</strong> with CCSD(T).</p><h2 id="Using-linear-response"><a class="docs-heading-anchor" href="#Using-linear-response">Using linear response</a><a id="Using-linear-response-1"></a><a class="docs-heading-anchor-permalink" href="#Using-linear-response" title="Permalink"></a></h2><p>Now we use linear response to compute this analytically; we refer to standard textbooks for the formalism. In the following, <span>$\chi_0$</span> is the independent-particle polarizability, and <span>$K$</span> the Hartree-exchange-correlation kernel. We denote with <span>$\delta V_{\rm ext}$</span> an external perturbing potential (like in this case the uniform electric field). Then:</p><p class="math-container">\[\delta\rho = \chi_0 \delta V = \chi_0 (\delta V_{\rm ext} + K \delta\rho),\]</p><p>which implies</p><p class="math-container">\[\delta\rho = (1-\chi_0 K)^-1 \chi_0 \delta V_{\rm ext}.\]</p><p>From this we identify the polarizability operator to be <span>$\chi = (1-\chi_0 K)^{-1} \chi_0$</span>. Numerically, we apply <span>$\chi$</span> to <span>$\delta V = -x$</span> by solving a linear equation (the Dyson equation) iteratively.</p><pre><code class="language-julia">using KrylovKit
+println(&quot;Polarizability :   $polarizability&quot;)</code></pre><pre class="documenter-example-output">Reference dipole:  -0.0001345006454224442
+Displaced dipole:  0.017617930665608936
+Polarizability :   1.775243131103138</pre><p>The result on more converged grids is very close to published results. For example <a href="https://doi.org/10.1039/C8CP03569E">DOI 10.1039/C8CP03569E</a> quotes <strong>1.65</strong> with LSDA and <strong>1.38</strong> with CCSD(T).</p><h2 id="Using-linear-response"><a class="docs-heading-anchor" href="#Using-linear-response">Using linear response</a><a id="Using-linear-response-1"></a><a class="docs-heading-anchor-permalink" href="#Using-linear-response" title="Permalink"></a></h2><p>Now we use linear response to compute this analytically; we refer to standard textbooks for the formalism. In the following, <span>$\chi_0$</span> is the independent-particle polarizability, and <span>$K$</span> the Hartree-exchange-correlation kernel. We denote with <span>$\delta V_{\rm ext}$</span> an external perturbing potential (like in this case the uniform electric field). Then:</p><p class="math-container">\[\delta\rho = \chi_0 \delta V = \chi_0 (\delta V_{\rm ext} + K \delta\rho),\]</p><p>which implies</p><p class="math-container">\[\delta\rho = (1-\chi_0 K)^-1 \chi_0 \delta V_{\rm ext}.\]</p><p>From this we identify the polarizability operator to be <span>$\chi = (1-\chi_0 K)^{-1} \chi_0$</span>. Numerically, we apply <span>$\chi$</span> to <span>$\delta V = -x$</span> by solving a linear equation (the Dyson equation) iteratively.</p><pre><code class="language-julia">using KrylovKit
 
 # Apply (1- χ0 K)
 function dielectric_operator(δρ)
@@ -51,26 +51,27 @@ end
 
 println(&quot;Non-interacting polarizability: $(dipole(basis, δρ_nointeract))&quot;)
 println(&quot;Interacting polarizability:     $(dipole(basis, δρ))&quot;)</code></pre><pre class="documenter-example-output">WARNING: using KrylovKit.basis in module ex-polarizability conflicts with an existing identifier.
-[ Info: GMRES linsolve in iter 1; step 1: normres = 2.490275072606e-01
-[ Info: GMRES linsolve in iter 1; step 2: normres = 3.778133207155e-03
-[ Info: GMRES linsolve in iter 1; step 3: normres = 3.312839784278e-04
-[ Info: GMRES linsolve in iter 1; step 4: normres = 6.501755163479e-06
-[ Info: GMRES linsolve in iter 1; step 5: normres = 6.188779811093e-07
-[ Info: GMRES linsolve in iter 1; step 6: normres = 1.866706413174e-09
-[ Info: GMRES linsolve in iter 1; step 7: normres = 1.235396511535e-11
-[ Info: GMRES linsolve in iter 1; step 8: normres = 1.151499129023e-12
-[ Info: GMRES linsolve in iter 1; finished at step 8: normres = 1.151499129023e-12
-[ Info: GMRES linsolve in iter 2; step 1: normres = 1.212878564778e-06
-[ Info: GMRES linsolve in iter 2; step 2: normres = 1.230209747035e-07
-[ Info: GMRES linsolve in iter 2; step 3: normres = 2.793699801383e-09
-[ Info: GMRES linsolve in iter 2; step 4: normres = 2.787138744436e-11
-[ Info: GMRES linsolve in iter 2; step 5: normres = 1.471055017973e-12
-[ Info: GMRES linsolve in iter 2; finished at step 5: normres = 1.471055017973e-12
-[ Info: GMRES linsolve in iter 3; step 1: normres = 5.386474156202e-12
-[ Info: GMRES linsolve in iter 3; step 2: normres = 2.384339485221e-13
-[ Info: GMRES linsolve in iter 3; finished at step 2: normres = 2.384339485221e-13
-┌ Info: GMRES linsolve converged at iteration 3, step 2:
-│ *  norm of residual = 2.3719452451302135e-13
-└ *  number of operations = 17
-Non-interacting polarizability: 1.9241221551166865
-Interacting polarizability:     1.7722745161728366</pre><p>As expected, the interacting polarizability matches the finite difference result. The non-interacting polarizability is higher.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../scf_checkpoints/">« Saving SCF results on disk and SCF checkpoints</a><a class="docs-footer-nextpage" href="../gross_pitaevskii/">Gross-Pitaevskii equation in one dimension »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 15 October 2021 06:43">Friday 15 October 2021</span>. Using Julia version 1.6.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+[ Info: GMRES linsolve in iter 1; step 1: normres = 2.490947942158e-01
+[ Info: GMRES linsolve in iter 1; step 2: normres = 3.816668001468e-03
+[ Info: GMRES linsolve in iter 1; step 3: normres = 3.975234774984e-04
+[ Info: GMRES linsolve in iter 1; step 4: normres = 5.511769807903e-06
+[ Info: GMRES linsolve in iter 1; step 5: normres = 4.923691814813e-07
+[ Info: GMRES linsolve in iter 1; step 6: normres = 1.860947336074e-09
+[ Info: GMRES linsolve in iter 1; step 7: normres = 1.739688359467e-11
+[ Info: GMRES linsolve in iter 1; step 8: normres = 1.739440654198e-12
+[ Info: GMRES linsolve in iter 1; finished at step 8: normres = 1.739440654198e-12
+[ Info: GMRES linsolve in iter 2; step 1: normres = 6.709824474209e-07
+[ Info: GMRES linsolve in iter 2; step 2: normres = 7.791440683365e-08
+[ Info: GMRES linsolve in iter 2; step 3: normres = 1.182931110607e-09
+[ Info: GMRES linsolve in iter 2; step 4: normres = 2.519957110097e-11
+[ Info: GMRES linsolve in iter 2; step 5: normres = 6.274632167524e-13
+[ Info: GMRES linsolve in iter 2; finished at step 5: normres = 6.274632167524e-13
+[ Info: GMRES linsolve in iter 3; step 1: normres = 3.476083239003e-11
+[ Info: GMRES linsolve in iter 3; step 2: normres = 4.680382003106e-12
+[ Info: GMRES linsolve in iter 3; step 3: normres = 8.451618633549e-14
+[ Info: GMRES linsolve in iter 3; finished at step 3: normres = 8.451618633549e-14
+┌ Info: GMRES linsolve converged at iteration 3, step 3:
+│ *  norm of residual = 8.524801064595824e-14
+└ *  number of operations = 18
+Non-interacting polarizability: 1.9272398245940985
+Interacting polarizability:     1.7746568064997892</pre><p>As expected, the interacting polarizability matches the finite difference result. The non-interacting polarizability is higher.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../scf_checkpoints/">« Saving SCF results on disk and SCF checkpoints</a><a class="docs-footer-nextpage" href="../gross_pitaevskii/">Gross-Pitaevskii equation in one dimension »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 15 October 2021 08:46">Friday 15 October 2021</span>. Using Julia version 1.6.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
