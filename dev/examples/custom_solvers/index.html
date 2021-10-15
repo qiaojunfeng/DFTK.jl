@@ -48,15 +48,15 @@ end</code></pre><p>That&#39;s it! Now we just run the SCF with these solvers</p>
                                eigensolver=my_eig_solver,
                                mixing=MyMixing());</code></pre><pre class="documenter-example-output">n     Energy            Eₙ-Eₙ₋₁     ρout-ρin   α      Diag
 ---   ---------------   ---------   --------   ----   ----
-  1   -7.209545287068         NaN   3.42e-01   0.80    0.0
-  2   -7.243853261075   -3.43e-02   1.48e-01   0.80    0.0
-  3   -7.248826061638   -4.97e-03   5.37e-02   0.80    0.0
-  4   -7.249123675735   -2.98e-04   2.63e-02   0.80    0.0
-  5   -7.249194183790   -7.05e-05   1.31e-02   0.80    0.0
-  6   -7.249211118988   -1.69e-05   6.64e-03   0.80    0.0
-  7   -7.249215344139   -4.23e-06   3.43e-03   0.80    0.0
-  8   -7.249216453741   -1.11e-06   1.80e-03   0.80    0.0
-  9   -7.249216762181   -3.08e-07   9.60e-04   0.80    0.0
- 10   -7.249216852834   -9.07e-08   5.22e-04   0.80    0.0
- 11   -7.249216880836   -2.80e-08   2.88e-04   0.80    0.0
- 12   -7.249216889848   -9.01e-09   1.61e-04   0.80    0.0</pre><p>Note that the default convergence criterion is on the difference of energy from one step to the other; when this gets below <code>tol</code>, the &quot;driver&quot; <code>self_consistent_field</code> artificially makes the fixpoint solver think it&#39;s converged by forcing <code>f(x) = x</code>. You can customize this with the <code>is_converged</code> keyword argument to <code>self_consistent_field</code>.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../forwarddiff/">« Polarizability using automatic differentiation</a><a class="docs-footer-nextpage" href="../custom_potential/">Custom potential »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Wednesday 13 October 2021 19:55">Wednesday 13 October 2021</span>. Using Julia version 1.6.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  1   -7.229641788704         NaN   3.21e-01   0.80    0.0
+  2   -7.246820538708   -1.72e-02   1.24e-01   0.80    0.0
+  3   -7.249012336141   -2.19e-03   4.65e-02   0.80    0.0
+  4   -7.249165082090   -1.53e-04   2.27e-02   0.80    0.0
+  5   -7.249203432559   -3.84e-05   1.13e-02   0.80    0.0
+  6   -7.249213243596   -9.81e-06   5.67e-03   0.80    0.0
+  7   -7.249215852846   -2.61e-06   2.91e-03   0.80    0.0
+  8   -7.249216581701   -7.29e-07   1.52e-03   0.80    0.0
+  9   -7.249216796115   -2.14e-07   8.11e-04   0.80    0.0
+ 10   -7.249216862318   -6.62e-08   4.42e-04   0.80    0.0
+ 11   -7.249216883619   -2.13e-08   2.45e-04   0.80    0.0
+ 12   -7.249216890700   -7.08e-09   1.38e-04   0.80    0.0</pre><p>Note that the default convergence criterion is on the difference of energy from one step to the other; when this gets below <code>tol</code>, the &quot;driver&quot; <code>self_consistent_field</code> artificially makes the fixpoint solver think it&#39;s converged by forcing <code>f(x) = x</code>. You can customize this with the <code>is_converged</code> keyword argument to <code>self_consistent_field</code>.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../forwarddiff/">« Polarizability using automatic differentiation</a><a class="docs-footer-nextpage" href="../custom_potential/">Custom potential »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 15 October 2021 06:43">Friday 15 October 2021</span>. Using Julia version 1.6.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
