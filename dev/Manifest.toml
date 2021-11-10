@@ -63,6 +63,12 @@ git-tree-sha1 = "f885e7e7c124f8c92650d61b9477b9ac2ee607dd"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 version = "1.11.1"
 
+[[ChangesOfVariables]]
+deps = ["LinearAlgebra", "Test"]
+git-tree-sha1 = "9a1d594397670492219635b35a3d830b04730d62"
+uuid = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
+version = "0.1.1"
+
 [[CommonSolve]]
 git-tree-sha1 = "68a0743f578349ada8bc911a5cbd5a2ef6ed6d1f"
 uuid = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
@@ -98,8 +104,8 @@ version = "1.3.0"
 
 [[DFTK]]
 deps = ["AbstractFFTs", "BlockArrays", "Brillouin", "Conda", "FFTW", "ForwardDiff", "Interpolations", "IterTools", "IterativeSolvers", "JSON", "Libxc", "LineSearches", "LinearAlgebra", "LinearMaps", "MPI", "Markdown", "NLsolve", "Optim", "OrderedCollections", "PeriodicTable", "Polynomials", "Primes", "Printf", "ProgressMeter", "PyCall", "Requires", "Roots", "SparseArrays", "SpecialFunctions", "Spglib", "StaticArrays", "Statistics", "TimerOutputs", "Unitful", "UnitfulAtomic", "spglib_jll"]
-git-tree-sha1 = "2977962c1c698ecf20713ed49802e3485454c2a1"
-repo-rev = "5d2bb8fcee108732d2959808d040718999b9a22b"
+git-tree-sha1 = "f46268fc3e4912343c695efad5de625465104664"
+repo-rev = "9ce57440fd93b5284f3614acac07de42dcfcb269"
 repo-url = "https://github.com/JuliaMolSim/DFTK.jl.git"
 uuid = "acf6eb54-70d9-11e9-0013-234b7a5f5337"
 version = "0.4.0"
@@ -185,10 +191,10 @@ uuid = "6a86dc24-6348-571c-b903-95158fe2bd41"
 version = "2.8.1"
 
 [[ForwardDiff]]
-deps = ["CommonSubexpressions", "DiffResults", "DiffRules", "LinearAlgebra", "NaNMath", "Preferences", "Printf", "Random", "SpecialFunctions", "StaticArrays"]
-git-tree-sha1 = "63777916efbcb0ab6173d09a658fb7f2783de485"
+deps = ["CommonSubexpressions", "DiffResults", "DiffRules", "LinearAlgebra", "LogExpFunctions", "NaNMath", "Preferences", "Printf", "Random", "SpecialFunctions", "StaticArrays"]
+git-tree-sha1 = "6406b5112809c08b1baa5703ad274e1dded0652f"
 uuid = "f6369f11-7733-5829-9624-2563aa707210"
-version = "0.10.21"
+version = "0.10.23"
 
 [[Future]]
 deps = ["Random"]
@@ -229,9 +235,9 @@ version = "1.5.0"
 
 [[InverseFunctions]]
 deps = ["Test"]
-git-tree-sha1 = "f0c6489b12d28fb4c2103073ec7452f3423bd308"
+git-tree-sha1 = "a7254c0acd8e62f1ac75ad24d5db43f5f19f3c65"
 uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
-version = "0.1.1"
+version = "0.1.2"
 
 [[IrrationalConstants]]
 git-tree-sha1 = "7fd44fd4ff43fc60815f8e764c0f352b83c49151"
@@ -292,9 +298,9 @@ version = "0.3.6"
 
 [[Libxc_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "d64d26f40adf21cb2844a04ac770b6da1e4f6489"
+git-tree-sha1 = "fd9e6deb9a7a12a5e7a6c2e2fd4a35a422c787e0"
 uuid = "a56a6d9d-ad03-58af-ab61-878bf78270d6"
-version = "5.1.5+2"
+version = "5.1.7+0"
 
 [[LineSearches]]
 deps = ["LinearAlgebra", "NLSolversBase", "NaNMath", "Parameters", "Printf"]
@@ -308,15 +314,15 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[LinearMaps]]
 deps = ["LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "ce708e2b5bbab5c47ffc24200566cbdfa04ff1c1"
+git-tree-sha1 = "dbb14c604fc47aa4f2e19d0ebb7b6416f3cfa5f5"
 uuid = "7a12625a-238d-50fd-b39a-03d52299707e"
-version = "3.5.0"
+version = "3.5.1"
 
 [[LogExpFunctions]]
-deps = ["ChainRulesCore", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "6193c3815f13ba1b78a51ce391db8be016ae9214"
+deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
+git-tree-sha1 = "be9eef9f9d78cecb6f262f3c10da151a6c5ab827"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.4"
+version = "0.3.5"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -529,9 +535,9 @@ version = "1.1.3"
 
 [[Roots]]
 deps = ["CommonSolve", "Printf", "Setfield"]
-git-tree-sha1 = "f7ac5ddfba4234908564227ccdab87f50d1c578f"
+git-tree-sha1 = "4c40dc61b51054bdb93536400420d73fdca6865e"
 uuid = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
-version = "1.3.6"
+version = "1.3.7"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -679,7 +685,7 @@ deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 [[spglib_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "b0c3663fec9c5fc3531a6c2ac71201a1c236272b"
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "9235bd863f07d890311dd11a8c9de125cb32c6ff"
 uuid = "ac4a9f1e-bdb2-5204-990c-47c8b2f70d4e"
-version = "1.16.2+0"
+version = "1.16.2+1"
