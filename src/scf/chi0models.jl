@@ -18,6 +18,7 @@ For details see Herbst, Levitt 2020 arXiv:2009.01665
     adjust_temperature = IncreaseMixingTemperature()
     characteristic_length = 0  # in Bohr (0 means low-pass filtering is disabled)
                                # Good values for filtering are between 2 and 0.1 Bohr
+                               # Fluctuations of the LDOS below this length are smoothened.
 end
 function (χ0::LdosModel)(basis; eigenvalues, ψ, εF, kwargs...)
     n_spin = basis.model.n_spin_components
@@ -31,10 +32,10 @@ function (χ0::LdosModel)(basis; eigenvalues, ψ, εF, kwargs...)
     end
 
     if χ0.characteristic_length > 0
-        length_fourier = 2π / χ0.characteristic_length
-        G₀ = 2length_fourier / 3
-        Gslope = length_fourier / 6
-        f_lowpass(G) = (1 - erf((G - G₀) / Gslope))/ 2
+        wavelength = 2π / χ0.characteristic_length
+        G₀ = 2wavelength / 3
+        Gslope = wavelength / 6
+        f_lowpass(G) = erfc((G - G₀) / Gslope) / 2
 
         lowpass = [f_lowpass(norm(G)) for G in G_vectors_cart(basis)]
         ldos = G_to_r(basis, r_to_G(basis, ldos) .* lowpass)
