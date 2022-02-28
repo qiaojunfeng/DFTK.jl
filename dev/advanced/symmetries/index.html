@@ -15,24 +15,24 @@ S &amp;= W^{T}\\
 basis_nosym = PlaneWaveBasis(model_nosym; Ecut, kgrid)
 scfres_nosym = @time self_consistent_field(basis_nosym, tol=1e-8)</code></pre><pre class="documenter-example-output">n     Energy            Eₙ-Eₙ₋₁     ρout-ρin   α      Diag
 ---   ---------------   ---------   --------   ----   ----
-  1   -7.868522006682         NaN   1.87e-01   0.80    2.9
-  2   -7.872637178427   -4.12e-03   2.87e-02   0.80    1.0
-  3   -7.872877457428   -2.40e-04   2.57e-03   0.80    2.8
-  4   -7.872878195910   -7.38e-07   4.37e-04   0.80    2.5
-  5   -7.872878210841   -1.49e-08   4.16e-05   0.80    1.2
-  6   -7.872878213080   -2.24e-09   6.38e-06   0.80    2.2
-  3.069266 seconds (1.42 M allocations: 589.874 MiB, 3.63% gc time, 5.92% compilation time)</pre><p>and then redo it using symmetry (the default):</p><pre><code class="language-julia">model_sym = model_LDA(lattice, atoms)
+  1   -7.868532908987         NaN   1.87e-01   0.80    2.9
+  2   -7.872645498583   -4.11e-03   2.87e-02   0.80    1.0
+  3   -7.872877429756   -2.32e-04   2.55e-03   0.80    2.8
+  4   -7.872878197223   -7.67e-07   4.31e-04   0.80    2.5
+  5   -7.872878211783   -1.46e-08   3.37e-05   0.80    1.1
+  6   -7.872878213099   -1.32e-09   4.85e-06   0.80    2.8
+  2.693507 seconds (1.45 M allocations: 598.972 MiB, 6.48% gc time, 5.40% compilation time)</pre><p>and then redo it using symmetry (the default):</p><pre><code class="language-julia">model_sym = model_LDA(lattice, atoms)
 basis_sym = PlaneWaveBasis(model_sym; Ecut, kgrid)
 scfres_sym = @time self_consistent_field(basis_sym, tol=1e-8)</code></pre><pre class="documenter-example-output">n     Energy            Eₙ-Eₙ₋₁     ρout-ρin   α      Diag
 ---   ---------------   ---------   --------   ----   ----
-  1   -7.868317498196         NaN   1.88e-01   0.80    3.6
-  2   -7.872645329552   -4.33e-03   2.89e-02   0.80    1.0
-  3   -7.872877291760   -2.32e-04   2.55e-03   0.80    2.8
-  4   -7.872878193348   -9.02e-07   4.51e-04   0.80    2.6
-  5   -7.872878211375   -1.80e-08   4.33e-05   0.80    1.7
-  6   -7.872878213101   -1.73e-09   4.88e-06   0.80    2.6
-  0.777309 seconds (4.07 M allocations: 231.552 MiB, 6.34% gc time)</pre><p>Clearly both yield the same energy but the version employing symmetry is faster, since less <span>$k$</span>-points are explicitly treated:</p><pre><code class="language-julia">(length(basis_sym.kpoints), length(basis_nosym.kpoints))</code></pre><pre class="documenter-example-output">(10, 64)</pre><p>Both SCFs would even agree in the convergence history if exact diagonalization was used for the eigensolver in each step of both SCFs. But since DFTK adjusts this <code>diagtol</code> value adaptively during the SCF to increase performance, a slightly different history is obtained. Try adding the keyword argument <code>determine_diagtol=(args...; kwargs...) -&gt; 1e-8</code> in each SCF call to fix the diagonalization tolerance to be <code>1e-8</code> for all SCF steps, which will result in an almost identical convergence history.</p><p>We can also explicitly verify both methods to yield the same density:</p><pre><code class="language-julia">(norm(scfres_sym.ρ - scfres_nosym.ρ),
- norm(values(scfres_sym.energies) .- values(scfres_nosym.energies)))</code></pre><pre class="documenter-example-output">(1.1473933400610957e-5, 3.736637813162023e-6)</pre><p>To demonstrate the mapping between <code>k</code>-points due to symmetry, we pick an arbitrary <code>k</code>-point in the irreducible Brillouin zone:</p><pre><code class="language-julia">ikpt_irred = 2
+  1   -7.868269959921         NaN   1.87e-01   0.80    3.6
+  2   -7.872633478547   -4.36e-03   2.89e-02   0.80    1.0
+  3   -7.872877346442   -2.44e-04   2.55e-03   0.80    2.9
+  4   -7.872878195633   -8.49e-07   4.43e-04   0.80    2.5
+  5   -7.872878211645   -1.60e-08   3.92e-05   0.80    1.4
+  6   -7.872878213100   -1.45e-09   5.10e-06   0.80    2.8
+  0.664933 seconds (4.07 M allocations: 231.026 MiB, 9.12% gc time)</pre><p>Clearly both yield the same energy but the version employing symmetry is faster, since less <span>$k$</span>-points are explicitly treated:</p><pre><code class="language-julia">(length(basis_sym.kpoints), length(basis_nosym.kpoints))</code></pre><pre class="documenter-example-output">(10, 64)</pre><p>Both SCFs would even agree in the convergence history if exact diagonalization was used for the eigensolver in each step of both SCFs. But since DFTK adjusts this <code>diagtol</code> value adaptively during the SCF to increase performance, a slightly different history is obtained. Try adding the keyword argument <code>determine_diagtol=(args...; kwargs...) -&gt; 1e-8</code> in each SCF call to fix the diagonalization tolerance to be <code>1e-8</code> for all SCF steps, which will result in an almost identical convergence history.</p><p>We can also explicitly verify both methods to yield the same density:</p><pre><code class="language-julia">(norm(scfres_sym.ρ - scfres_nosym.ρ),
+ norm(values(scfres_sym.energies) .- values(scfres_nosym.energies)))</code></pre><pre class="documenter-example-output">(1.071733705224186e-5, 3.2417159829932893e-6)</pre><p>To demonstrate the mapping between <code>k</code>-points due to symmetry, we pick an arbitrary <code>k</code>-point in the irreducible Brillouin zone:</p><pre><code class="language-julia">ikpt_irred = 2
 kpt_irred_coord = basis_sym.kpoints[ikpt_irred].coordinate
 basis_sym.ksymops[ikpt_irred]</code></pre><pre class="documenter-example-output">6-element Vector{SymOp}:
  SymOp{Float64}([1 0 0; 0 1 0; 0 0 1], [0.0, 0.0, 0.0])
@@ -45,10 +45,10 @@ kpt_red_coord = symop.S * basis_sym.kpoints[ikpt_irred].coordinate
 ikpt_red = findfirst(kcoord -&gt; kcoord ≈ kpt_red_coord,
                      [k.coordinate for k in basis_nosym.kpoints])
 [scfres_sym.eigenvalues[ikpt_irred] scfres_nosym.eigenvalues[ikpt_red]]</code></pre><pre class="documenter-example-output">7×2 Matrix{Float64}:
- -0.12437    -0.124371
-  0.0951514   0.095151
-  0.176057    0.176057
+ -0.12437    -0.12437
+  0.0951515   0.0951516
+  0.176057    0.176058
   0.231686    0.231685
   0.366275    0.366275
-  0.397683    0.397683
-  0.405285    0.405285</pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../useful_formulas/">« Useful formulas</a><a class="docs-footer-nextpage" href="../../api/">API reference »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 28 February 2022 16:42">Monday 28 February 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  0.397683    0.397684
+  0.405285    0.405285</pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../useful_formulas/">« Useful formulas</a><a class="docs-footer-nextpage" href="../../api/">API reference »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 28 February 2022 17:57">Monday 28 February 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
