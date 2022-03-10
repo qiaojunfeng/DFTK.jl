@@ -11,28 +11,28 @@ S &amp;= W^{T}\\
 &amp;= \sum_{k \in \mathcal{K}} \frac{1}{N_{\mathcal{S},k}} \sum_{S \in \mathcal{S}} S(Q(k))\\
 &amp;= \frac{1}{N_{\mathcal{S}}} \sum_{S \in \mathcal{S}}
    \left(\sum_{k \in \mathcal{K}} \frac{N_\mathcal{S}}{N_{\mathcal{S},k}} Q(k) \right)
-\end{aligned}\]</p><p>Here, <span>$N_\mathcal{S} = |\mathcal{S}|$</span> is the total number of symmetry operations and <span>$N_{\mathcal{S},k}$</span> denotes the number of operations such that leave <span>$k$</span> invariant. The latter operations form a subgroup of the group of all symmetry operations, sometimes called the <em>small/little group of <span>$k$</span></em>. The factor <span>$\frac{N_\mathcal{S}}{N_{S,k}}$</span>, also equal to the ratio of number of reducible points encoded by this particular irreducible <span>$k$</span> to the total number of reducible points, determines the weight of each irreducible <span>$k$</span> point.</p><h2 id="Example"><a class="docs-heading-anchor" href="#Example">Example</a><a id="Example-1"></a><a class="docs-heading-anchor-permalink" href="#Example" title="Permalink"></a></h2><p>Let us demonstrate this in practice. We consider silicon, setup appropriately in the <code>lattice</code> and <code>atoms</code> objects as in <a href="../../guide/tutorial/#Tutorial">Tutorial</a> and to reach a fast execution, we take a small <code>Ecut</code> of <code>5</code> and a <code>[4, 4, 4]</code> Monkhorst-Pack grid. First we perform the DFT calculation disabling symmetry handling</p><pre><code class="language-julia">model_nosym = model_LDA(lattice, atoms; symmetries=false)
+\end{aligned}\]</p><p>Here, <span>$N_\mathcal{S} = |\mathcal{S}|$</span> is the total number of symmetry operations and <span>$N_{\mathcal{S},k}$</span> denotes the number of operations such that leave <span>$k$</span> invariant. The latter operations form a subgroup of the group of all symmetry operations, sometimes called the <em>small/little group of <span>$k$</span></em>. The factor <span>$\frac{N_\mathcal{S}}{N_{S,k}}$</span>, also equal to the ratio of number of reducible points encoded by this particular irreducible <span>$k$</span> to the total number of reducible points, determines the weight of each irreducible <span>$k$</span> point.</p><h2 id="Example"><a class="docs-heading-anchor" href="#Example">Example</a><a id="Example-1"></a><a class="docs-heading-anchor-permalink" href="#Example" title="Permalink"></a></h2><p>Let us demonstrate this in practice. We consider silicon, setup appropriately in the <code>lattice</code>, <code>atoms</code> and <code>positions</code> objects as in <a href="../../guide/tutorial/#Tutorial">Tutorial</a> and to reach a fast execution, we take a small <code>Ecut</code> of <code>5</code> and a <code>[4, 4, 4]</code> Monkhorst-Pack grid. First we perform the DFT calculation disabling symmetry handling</p><pre><code class="language-julia">model_nosym = model_LDA(lattice, atoms, positions; symmetries=false)
 basis_nosym = PlaneWaveBasis(model_nosym; Ecut, kgrid)
 scfres_nosym = @time self_consistent_field(basis_nosym, tol=1e-8)</code></pre><pre class="documenter-example-output">n     Energy            log10(ΔE)   log10(Δρ)   Diag
 ---   ---------------   ---------   ---------   ----
-  1   -7.868578807976                   -0.73    3.0
-  2   -7.872650894403       -2.39       -1.54    1.0
-  3   -7.872877429166       -3.64       -2.59    2.8
-  4   -7.872878198053       -6.11       -3.36    2.5
-  5   -7.872878212051       -7.85       -4.51    1.0
-  6   -7.872878213119       -8.97       -5.42    3.0
-  2.374341 seconds (1.39 M allocations: 536.343 MiB, 5.63% gc time, 3.69% compilation time)</pre><p>and then redo it using symmetry (the default):</p><pre><code class="language-julia">model_sym = model_LDA(lattice, atoms)
+  1   -7.868531461620                   -0.73    2.9
+  2   -7.872642734290       -2.39       -1.54    1.0
+  3   -7.872877451281       -3.63       -2.60    2.8
+  4   -7.872878197169       -6.13       -3.37    2.5
+  5   -7.872878211512       -7.84       -4.45    1.0
+  6   -7.872878213094       -8.80       -5.27    2.6
+  2.858275 seconds (1.35 M allocations: 526.873 MiB, 5.55% gc time, 3.66% compilation time)</pre><p>and then redo it using symmetry (the default):</p><pre><code class="language-julia">model_sym = model_LDA(lattice, atoms, positions)
 basis_sym = PlaneWaveBasis(model_sym; Ecut, kgrid)
 scfres_sym = @time self_consistent_field(basis_sym, tol=1e-8)</code></pre><pre class="documenter-example-output">n     Energy            log10(ΔE)   log10(Δρ)   Diag
 ---   ---------------   ---------   ---------   ----
-  1   -7.868302947374                   -0.73    3.6
-  2   -7.872642695731       -2.36       -1.54    1.0
-  3   -7.872877325759       -3.63       -2.59    2.8
-  4   -7.872878195666       -6.06       -3.35    2.5
-  5   -7.872878211648       -7.80       -4.41    1.5
-  6   -7.872878213103       -8.84       -5.32    2.8
-  0.633732 seconds (4.07 M allocations: 219.869 MiB, 7.69% gc time)</pre><p>Clearly both yield the same energy but the version employing symmetry is faster, since less <span>$k$</span>-points are explicitly treated:</p><pre><code class="language-julia">(length(basis_sym.kpoints), length(basis_nosym.kpoints))</code></pre><pre class="documenter-example-output">(10, 64)</pre><p>Both SCFs would even agree in the convergence history if exact diagonalization was used for the eigensolver in each step of both SCFs. But since DFTK adjusts this <code>diagtol</code> value adaptively during the SCF to increase performance, a slightly different history is obtained. Try adding the keyword argument <code>determine_diagtol=(args...; kwargs...) -&gt; 1e-8</code> in each SCF call to fix the diagonalization tolerance to be <code>1e-8</code> for all SCF steps, which will result in an almost identical convergence history.</p><p>We can also explicitly verify both methods to yield the same density:</p><pre><code class="language-julia">(norm(scfres_sym.ρ - scfres_nosym.ρ),
- norm(values(scfres_sym.energies) .- values(scfres_nosym.energies)))</code></pre><pre class="documenter-example-output">(7.523449691199395e-6, 9.347211878330467e-6)</pre><p>To demonstrate the mapping between <code>k</code>-points due to symmetry, we pick an arbitrary <code>k</code>-point in the irreducible Brillouin zone:</p><pre><code class="language-julia">ikpt_irred = 2
+  1   -7.868242889522                   -0.73    3.5
+  2   -7.872629871928       -2.36       -1.54    1.0
+  3   -7.872877397322       -3.61       -2.59    3.0
+  4   -7.872878196488       -6.10       -3.35    2.6
+  5   -7.872878211780       -7.82       -4.43    1.2
+  6   -7.872878213106       -8.88       -5.34    2.8
+  0.741123 seconds (4.07 M allocations: 219.566 MiB, 8.64% gc time)</pre><p>Clearly both yield the same energy but the version employing symmetry is faster, since less <span>$k$</span>-points are explicitly treated:</p><pre><code class="language-julia">(length(basis_sym.kpoints), length(basis_nosym.kpoints))</code></pre><pre class="documenter-example-output">(10, 64)</pre><p>Both SCFs would even agree in the convergence history if exact diagonalization was used for the eigensolver in each step of both SCFs. But since DFTK adjusts this <code>diagtol</code> value adaptively during the SCF to increase performance, a slightly different history is obtained. Try adding the keyword argument <code>determine_diagtol=(args...; kwargs...) -&gt; 1e-8</code> in each SCF call to fix the diagonalization tolerance to be <code>1e-8</code> for all SCF steps, which will result in an almost identical convergence history.</p><p>We can also explicitly verify both methods to yield the same density:</p><pre><code class="language-julia">(norm(scfres_sym.ρ - scfres_nosym.ρ),
+ norm(values(scfres_sym.energies) .- values(scfres_nosym.energies)))</code></pre><pre class="documenter-example-output">(9.716491222246419e-6, 1.5907162227819387e-6)</pre><p>To demonstrate the mapping between <code>k</code>-points due to symmetry, we pick an arbitrary <code>k</code>-point in the irreducible Brillouin zone:</p><pre><code class="language-julia">ikpt_irred = 2
 kpt_irred_coord = basis_sym.kpoints[ikpt_irred].coordinate
 basis_sym.ksymops[ikpt_irred]</code></pre><pre class="documenter-example-output">6-element Vector{SymOp}:
  SymOp{Float64}([1 0 0; 0 1 0; 0 0 1], [0.0, 0.0, 0.0], [1 0 0; 0 1 0; 0 0 1], [-0.0, -0.0, -0.0])
@@ -46,9 +46,9 @@ ikpt_red = findfirst(kcoord -&gt; kcoord ≈ kpt_red_coord,
                      [k.coordinate for k in basis_nosym.kpoints])
 [scfres_sym.eigenvalues[ikpt_irred] scfres_nosym.eigenvalues[ikpt_red]]</code></pre><pre class="documenter-example-output">7×2 Matrix{Float64}:
  -0.12437    -0.12437
-  0.0951515   0.0951521
+  0.0951515   0.0951513
   0.176057    0.176058
-  0.231686    0.231686
-  0.366275    0.366276
-  0.397683    0.397684
-  0.405285    0.405286</pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../useful_formulas/">« Useful formulas</a><a class="docs-footer-nextpage" href="../../api/">API reference »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 10 March 2022 17:06">Thursday 10 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  0.231686    0.231685
+  0.366275    0.366275
+  0.397683    0.397683
+  0.405285    0.405285</pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../useful_formulas/">« Useful formulas</a><a class="docs-footer-nextpage" href="../../api/">API reference »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 10 March 2022 19:29">Thursday 10 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -10,29 +10,29 @@ a = 5.6537  # GaAs lattice parameter in Ångström (because ASE uses Å as lengt
 gaas = ase_build.bulk(&quot;GaAs&quot;, &quot;zincblende&quot;, a=a)
 surface = ase_build.surface(gaas, miller, n_GaAs, 0, periodic=true);</code></pre><p>Get the amount of vacuum in Ångström we need to add</p><pre><code class="language-julia">d_vacuum = maximum(maximum, surface.cell) / n_GaAs * n_vacuum
 surface = ase_build.surface(gaas, miller, n_GaAs, d_vacuum, periodic=true);</code></pre><p>Write an image of the surface and embed it as a nice illustration:</p><pre><code class="language-julia">pyimport(&quot;ase.io&quot;).write(&quot;surface.png&quot;, surface * (3, 3, 1),
-                         rotation=&quot;-90x, 30y, -75z&quot;)</code></pre><img src="../surface.png" width=500 height=500 /><p>Use the <code>load_atoms</code> and <code>load_lattice</code> functions to convert to DFTK datastructures. These two functions not only support importing ASE atoms into DFTK, but a few more third-party datastructures as well. Typically the imported <code>atoms</code> use a bare Coulomb potential, such that appropriate pseudopotentials need to be attached in a post-step:</p><pre><code class="language-julia">using DFTK
+                         rotation=&quot;-90x, 30y, -75z&quot;)</code></pre><img src="../surface.png" width=500 height=500 /><p>Use the <code>load_atoms</code>, <code>load_positions</code> and <code>load_lattice</code> functions to convert to DFTK datastructures. These two functions not only support importing ASE atoms into DFTK, but a few more third-party datastructures as well. Typically the imported <code>atoms</code> use a bare Coulomb potential, such that appropriate pseudopotentials need to be attached in a post-step:</p><pre><code class="language-julia">using DFTK
 
 atoms = load_atoms(surface)
-atoms = [ElementPsp(el.symbol, psp=load_psp(el.symbol, functional=&quot;pbe&quot;)) =&gt; position
-         for (el, position) in atoms]
-lattice = load_lattice(surface);</code></pre><p>We model this surface with (quite large a) temperature of 0.01 Hartree to ease convergence. Try lowering the SCF convergence tolerance (<code>tol</code>) or the <code>temperature</code> or try <code>mixing=KerkerMixing()</code> to see the full challenge of this system.</p><pre><code class="language-julia">model = model_DFT(lattice, atoms, [:gga_x_pbe, :gga_c_pbe],
+atoms = [ElementPsp(el.symbol, psp=load_psp(el.symbol, functional=&quot;pbe&quot;)) for el in atoms]
+positions = load_positions(surface)
+lattice = load_lattice(surface);</code></pre><p>We model this surface with (quite large a) temperature of 0.01 Hartree to ease convergence. Try lowering the SCF convergence tolerance (<code>tol</code>) or the <code>temperature</code> or try <code>mixing=KerkerMixing()</code> to see the full challenge of this system.</p><pre><code class="language-julia">model = model_DFT(lattice, atoms, positions, [:gga_x_pbe, :gga_c_pbe],
                   temperature=0.001, smearing=DFTK.Smearing.Gaussian())
 basis = PlaneWaveBasis(model; Ecut, kgrid)
 
 scfres = self_consistent_field(basis, tol=1e-4, mixing=LdosMixing());</code></pre><pre class="documenter-example-output">n     Energy            log10(ΔE)   log10(Δρ)   Diag
 ---   ---------------   ---------   ---------   ----
-  1   -16.61116409169                   -0.59    5.5
-  2   -16.73241712202       -0.92       -1.02    1.0
-  3   -16.73607420946       -2.44       -1.60    3.5
-  4   -16.73641016870       -3.47       -2.18    2.0
-  5   -16.73644291961       -4.48       -2.65    2.8</pre><pre><code class="language-julia">scfres.energies</code></pre><pre class="documenter-example-output">Energy breakdown (in Ha):
-    Kinetic             5.8450775 
-    AtomicLocal         -105.5841296
-    AtomicNonlocal      2.3505112 
+  1   -16.61068248713                   -0.58    5.0
+  2   -16.73242432814       -0.91       -1.02    1.0
+  3   -16.73609089027       -2.44       -1.60    2.8
+  4   -16.73640626048       -3.50       -2.18    2.0
+  5   -16.73644272655       -4.44       -2.66    3.0</pre><pre><code class="language-julia">scfres.energies</code></pre><pre class="documenter-example-output">Energy breakdown (in Ha):
+    Kinetic             5.8449807 
+    AtomicLocal         -105.5837623
+    AtomicNonlocal      2.3504029 
     Ewald               35.5044300
     PspCorrection       0.2016043 
-    Hartree             49.5407768
-    Xc                  -4.5945834
-    Entropy             -0.0001297
+    Hartree             49.5405733
+    Xc                  -4.5945426
+    Entropy             -0.0001291
 
-    total               -16.736442919609</pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-RCW2001"><a class="tag is-link" href="#citeref-RCW2001">RCW2001</a>D. Raczkowski, A. Canning, and L. W. Wang <em>Thomas-Fermi charge mixing for obtaining self-consistency in density functional calculations</em> Phys. Rev. B <strong>64</strong>, 121101(R).</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../pymatgen/">« Creating supercells with pymatgen</a><a class="docs-footer-nextpage" href="../collinear_magnetism/">Collinear spin and magnetic systems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 10 March 2022 17:06">Thursday 10 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+    total               -16.736442726548</pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-RCW2001"><a class="tag is-link" href="#citeref-RCW2001">RCW2001</a>D. Raczkowski, A. Canning, and L. W. Wang <em>Thomas-Fermi charge mixing for obtaining self-consistency in density functional calculations</em> Phys. Rev. B <strong>64</strong>, 121101(R).</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../pymatgen/">« Creating supercells with pymatgen</a><a class="docs-footer-nextpage" href="../collinear_magnetism/">Collinear spin and magnetic systems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 10 March 2022 19:29">Thursday 10 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
