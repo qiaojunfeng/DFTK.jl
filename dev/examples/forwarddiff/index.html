@@ -32,16 +32,16 @@ function compute_dipole(ε; tol=1e-8, kwargs...)
 end;</code></pre><p>With this in place we can compute the polarizability from finite differences (just like in the previous example):</p><pre><code class="language-julia">polarizability_fd = let
     ε = 0.01
     (compute_dipole(ε) - compute_dipole(0.0)) / ε
-end</code></pre><pre class="documenter-example-output">1.7737024594878972</pre><p>We do the same thing using automatic differentiation. Under the hood this uses custom rules to implicitly differentiate through the self-consistent field fixed-point problem.</p><pre><code class="language-julia">polarizability = ForwardDiff.derivative(compute_dipole, 0.0)
+end</code></pre><pre class="documenter-example-output">1.775368941689854</pre><p>We do the same thing using automatic differentiation. Under the hood this uses custom rules to implicitly differentiate through the self-consistent field fixed-point problem.</p><pre><code class="language-julia">polarizability = ForwardDiff.derivative(compute_dipole, 0.0)
 println()
 println(&quot;Polarizability via ForwardDiff:       $polarizability&quot;)
 println(&quot;Polarizability via finite difference: $polarizability_fd&quot;)</code></pre><pre class="documenter-example-output">n     Energy            log10(ΔE)   log10(Δρ)   Diag
 ---   ---------------   ---------   ---------   ----
-  1   -2.770446017506                   -0.53    8.0
-  2   -2.772040927595       -2.80       -1.29    1.0
-  3   -2.772083298870       -4.37       -2.92    2.0
-  4   -2.772083416797       -6.93       -3.77    2.0
-  5   -2.772083417801       -9.00       -4.66    2.0
+  1   -2.770800016707                   -0.52    9.0
+  2   -2.772061779980       -2.90       -1.32    1.0
+  3   -2.772082565643       -4.68       -2.36    2.0
+  4   -2.772083417624       -6.07       -3.96    2.0
+  5   -2.772083417805       -9.74       -4.83    2.0
 
-Polarizability via ForwardDiff:       1.7725341203722327
-Polarizability via finite difference: 1.7737024594878972</pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../arbitrary_floattype/">« Arbitrary floating-point types</a><a class="docs-footer-nextpage" href="../custom_solvers/">Custom solvers »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 11 April 2022 16:04">Monday 11 April 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Polarizability via ForwardDiff:       1.772544924778693
+Polarizability via finite difference: 1.775368941689854</pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../arbitrary_floattype/">« Arbitrary floating-point types</a><a class="docs-footer-nextpage" href="../custom_solvers/">Custom solvers »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 12 April 2022 16:16">Tuesday 12 April 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
