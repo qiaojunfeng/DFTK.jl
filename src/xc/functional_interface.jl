@@ -45,14 +45,14 @@ Base.show(io::IO, fun::FallbackFunctional) = print(io, fun.identifier)
 function potential_terms(func::FallbackFunctional{:lda}, ρ::AbstractArray)
     @assert ndims(ρ) == 4
     size(ρ, 1) == 1 || error("Fallback functionals only for one spin.")
-    fE(ρ) = energy_per_particle(Val(func.identifier), ρ)
+    fE(ρ) = ρ > 1e-14 ? energy_per_particle(Val(func.identifier), ρ) : zero(ρ)
     fV(ρ) = ForwardDiff.derivative(ρ -> ρ*fE(ρ), ρ)
     (;zk=dropdims(fE.(ρ); dims=1), vrho=fV.(ρ))
 end
 function kernel_terms(func::FallbackFunctional{:lda}, ρ::AbstractArray)
     @assert ndims(ρ) == 4
     size(ρ, 1) == 1 || error("Fallback functionals only for one spin.")
-    fE(ρ)  = energy_per_particle(Val(func.identifier), ρ)
+    fE(ρ)  = ρ > 1e-14 ? energy_per_particle(Val(func.identifier), ρ) : zero(ρ)
     fV(ρ)  = ForwardDiff.derivative(ρ -> ρ*fE(ρ), ρ)
     fV2(ρ) = ForwardDiff.derivative(fV, ρ)
     (; zk=dropdims(fE.(ρ); dims=1), vrho=fV.(ρ), v2rho2=fV2.(ρ))
@@ -60,7 +60,7 @@ end
 function potential_terms(func::FallbackFunctional{:gga}, ρ::AbstractArray, σ::AbstractArray)
     @assert ndims(ρ) == 4
     size(ρ, 1) == 1 || error("Fallback functionals only for one spin.")
-    fE(ρ, σ)  = energy_per_particle(Val(func.identifier), ρ, σ)
+    fE(ρ, σ)  = ρ > 1e-14 ? energy_per_particle(Val(func.identifier), ρ, σ) : zero(ρ)
     fVρ(ρ, σ) = ForwardDiff.derivative(ρ -> ρ*fE(ρ, σ), ρ)
     fVσ(ρ, σ) = ForwardDiff.derivative(σ -> ρ*fE(ρ, σ), σ)
     (;zk=dropdims(fE.(ρ, σ); dims=1), vrho=fVρ.(ρ, σ), vsigma=fVσ.(ρ, σ))
