@@ -434,40 +434,19 @@ function add_kernel_gradient_correction!(δV, terms, density, perturbation, cros
     δV
 end
 
-function mergesum!(nt1::NamedTuple, nt2::NamedTuple)
-    for (key, data) in pairs(nt2)
-        if haskey(nt1, key)
-            nt1 = merge(nt1, (key => (data .+ getproperty(nt1, key)), ))
-        else
-            nt1 = merge(nt1, (key => data, ))
-        end
-    end
-    nt1
-end
-
-# non mutating version of mergesum!
-function mergesum(nt1::NamedTuple, nt2::NamedTuple)
-    #println("merge keys",keys(nt1)," and ",keys(nt2))
+function mergesum(nt1::NamedTuple{An}, nt2::NamedTuple{Bn}) where {An, Bn}
     all_keys = nothing
     ChainRulesCore.@ignore_derivatives begin
-        all_keys = Tuple(union(keys(nt1),keys(nt2)))
+        all_keys = (union(An, Bn)..., )
     end
-
-    #all_keys = ChainRulesCore.ignore_derivatives(
-    #    Tuple(union(keys(nt1),keys(nt2))))
-
-    function merge_key(key)
-        if haskey(nt1, key) && !haskey(nt2, key)
-            return nt1[key]
-        elseif haskey(nt2, key) && !haskey(nt1, key)
-            return nt2[key]
+    values = map(all_keys) do key
+        if haskey(nt1, key)
+            nt1[key] .+ get(nt2, key, false)
         else
-            return nt1[key] .+ nt2[key]
+            nt2[key]
         end
     end
-    values = map(merge_key, all_keys)
-
-    return NamedTuple{all_keys}(values)
+    NamedTuple{all_keys}(values)
 end
 
 for fun in (:potential_terms, :kernel_terms)
@@ -480,7 +459,7 @@ for fun in (:potential_terms, :kernel_terms)
             isempty(xcs) && return NamedTuple()
             result = $fun(xcs[1], density)
             for i in 2:length(xcs)
-                result = mergesum!(result, $fun(xcs[i], density))
+                result = mergesum(result, $fun(xcs[i], density))
             end
             result
         end

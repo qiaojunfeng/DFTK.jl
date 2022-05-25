@@ -12,6 +12,7 @@ using TimerOutputs
 using spglib_jll
 using Unitful
 using UnitfulAtomic
+using ChainRulesCore
 
 export Vec3
 export Mat3
