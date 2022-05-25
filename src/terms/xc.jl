@@ -445,6 +445,31 @@ function mergesum!(nt1::NamedTuple, nt2::NamedTuple)
     nt1
 end
 
+# non mutating version of mergesum!
+function mergesum(nt1::NamedTuple, nt2::NamedTuple)
+    #println("merge keys",keys(nt1)," and ",keys(nt2))
+    all_keys = nothing
+    ChainRulesCore.@ignore_derivatives begin
+        all_keys = Tuple(union(keys(nt1),keys(nt2)))
+    end
+
+    #all_keys = ChainRulesCore.ignore_derivatives(
+    #    Tuple(union(keys(nt1),keys(nt2))))
+
+    function merge_key(key)
+        if haskey(nt1, key) && !haskey(nt2, key)
+            return nt1[key]
+        elseif haskey(nt2, key) && !haskey(nt1, key)
+            return nt2[key]
+        else
+            return nt1[key] .+ nt2[key]
+        end
+    end
+    values = map(merge_key, all_keys)
+
+    return NamedTuple{all_keys}(values)
+end
+
 for fun in (:potential_terms, :kernel_terms)
     @eval begin
         function $fun(xc::Functional, density::LibxcDensities)
