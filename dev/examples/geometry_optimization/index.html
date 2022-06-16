@@ -38,17 +38,17 @@ xres = optimize(Optim.only_fg!(fg!), x0, LBFGS(),
 xmin = Optim.minimizer(xres)
 dmin = norm(lattice*xmin[1:3] - lattice*xmin[4:6])
 @printf &quot;\nOptimal bond length for Ecut=%.2f: %.3f Bohr\n&quot; Ecut dmin</code></pre><pre class="documenter-example-output">Iter     Function value   Gradient norm
-     0    -1.061651e+00     6.219569e-01
- * time: 6.008148193359375e-5
-     1    -1.064116e+00     2.892660e-01
- * time: 0.9975910186767578
-     2    -1.066010e+00     4.721810e-02
- * time: 1.4458198547363281
-     3    -1.066049e+00     3.847049e-04
- * time: 1.6461708545684814
-     4    -1.066049e+00     4.270661e-06
- * time: 1.8134958744049072
-     5    -1.066049e+00     1.561583e-07
- * time: 1.9939179420471191
+     0    -1.061651e+00     6.219374e-01
+ * time: 3.0040740966796875e-5
+     1    -1.064033e+00     2.944117e-01
+ * time: 1.2708759307861328
+     2    -1.066006e+00     4.913582e-02
+ * time: 1.653808832168579
+     3    -1.066049e+00     4.304110e-04
+ * time: 2.178670883178711
+     4    -1.066049e+00     4.804139e-06
+ * time: 2.29512095451355
+     5    -1.066049e+00     1.789906e-07
+ * time: 2.498037815093994
 
-Optimal bond length for Ecut=5.00: 1.556 Bohr</pre><p>We used here very rough parameters to generate the example and setting <code>Ecut</code> to 10 Ha yields a bond length of 1.523 Bohr, which <a href="https://docs.abinit.org/tutorial/base1/">agrees with ABINIT</a>.</p><div class="admonition is-info"><header class="admonition-header">Degrees of freedom</header><div class="admonition-body"><p>We used here a very general setting where we optimized on the 6 variables representing the position of the 2 atoms and it can be easily extended to molecules with more atoms (such as <span>$H_2O$</span>). In the particular case of <span>$H_2$</span>, we could use only the internal degree of freedom which, in this case, is just the bond length.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../collinear_magnetism/">« Collinear spin and magnetic systems</a><a class="docs-footer-nextpage" href="../scf_callbacks/">Monitoring self-consistent field calculations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 14 June 2022 06:05">Tuesday 14 June 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Optimal bond length for Ecut=5.00: 1.556 Bohr</pre><p>We used here very rough parameters to generate the example and setting <code>Ecut</code> to 10 Ha yields a bond length of 1.523 Bohr, which <a href="https://docs.abinit.org/tutorial/base1/">agrees with ABINIT</a>.</p><div class="admonition is-info"><header class="admonition-header">Degrees of freedom</header><div class="admonition-body"><p>We used here a very general setting where we optimized on the 6 variables representing the position of the 2 atoms and it can be easily extended to molecules with more atoms (such as <span>$H_2O$</span>). In the particular case of <span>$H_2$</span>, we could use only the internal degree of freedom which, in this case, is just the bond length.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../collinear_magnetism/">« Collinear spin and magnetic systems</a><a class="docs-footer-nextpage" href="../scf_callbacks/">Monitoring self-consistent field calculations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 16 June 2022 20:22">Thursday 16 June 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
